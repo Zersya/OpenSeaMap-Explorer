@@ -53,7 +53,14 @@ export interface MapSettings {
     coordinateGrid: LayerState;
     depthSoundings: LayerState;
     bathymetricContours: LayerState;
+    windy: LayerState;
   };
+}
+
+export interface WindyOptions {
+  overlay: string; // 'wind', 'rain', 'temp', 'clouds', 'waves', 'pressure'
+  level: string; // 'surface', '1000h', '850h', '700h', '500h', '300h', '200h'
+  timestamp: number | null; // Unix timestamp for forecast time or null for current
 }
 
 export interface MeasurementPoint {

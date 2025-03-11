@@ -32,6 +32,12 @@ const layers = computed(() => [
     name: 'Depth Soundings',
     description: 'Water depth measurements',
     state: mapStore.mapSettings.layers.depthSoundings
+  },
+  {
+    id: 'windy',
+    name: 'Weather (Windy)',
+    description: 'Weather forecast from Windy.com',
+    state: mapStore.mapSettings.layers.windy
   }
 ]);
 
@@ -47,31 +53,31 @@ const toggleCollapse = () => {
 </script>
 
 <template>
-  <div 
+  <div
     class="absolute top-4 left-4 z-map-controls bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300"
     :class="{ 'w-64': !isCollapsed, 'w-12': isCollapsed }"
   >
     <!-- Header with collapse button -->
     <div class="flex items-center justify-between p-2 bg-sea-blue text-white">
       <h2 class="text-sm font-semibold" :class="{ 'sr-only': isCollapsed }">Map Layers</h2>
-      <button 
-        @click="toggleCollapse" 
+      <button
+        @click="toggleCollapse"
         class="p-1 rounded hover:bg-sea-light hover:bg-opacity-20 focus:outline-none"
         :aria-label="isCollapsed ? 'Expand layer controls' : 'Collapse layer controls'"
       >
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          class="h-5 w-5" 
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5"
           :class="{ 'transform rotate-180': isCollapsed }"
-          fill="none" 
-          viewBox="0 0 24 24" 
+          fill="none"
+          viewBox="0 0 24 24"
           stroke="currentColor"
         >
-          <path 
-            stroke-linecap="round" 
-            stroke-linejoin="round" 
-            stroke-width="2" 
-            d="M4 6h16M4 12h16m-7 6h7" 
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16m-7 6h7"
           />
         </svg>
       </button>
@@ -95,19 +101,19 @@ const toggleCollapse = () => {
             <LoadingIndicator v-if="layer.state.loading" size="sm" />
           </div>
           <DisclosureButton class="p-1 rounded hover:bg-gray-200 focus:outline-none">
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              class="h-4 w-4 transition-transform duration-200" 
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4 transition-transform duration-200"
               :class="{ 'transform rotate-180': open }"
-              fill="none" 
-              viewBox="0 0 24 24" 
+              fill="none"
+              viewBox="0 0 24 24"
               stroke="black"
             >
-              <path 
-                stroke-linecap="round" 
-                stroke-linejoin="round" 
-                stroke-width="2" 
-                d="M19 9l-7 7-7-7" 
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
               />
             </svg>
           </DisclosureButton>

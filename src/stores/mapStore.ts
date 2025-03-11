@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import type { MapSettings, LayerState, MeasurementPath } from '@/types/maritime';
+import type { MapSettings, LayerState, MeasurementPath, WindyOptions } from '@/types/maritime';
 
 export const useMapStore = defineStore('map', () => {
   // Default map settings
@@ -15,6 +15,16 @@ export const useMapStore = defineStore('map', () => {
     lastUpdated: null
   });
 
+  // Default Windy options
+  const defaultWindyOptions = {
+    overlay: 'wind',
+    level: 'surface',
+    timestamp: null
+  };
+
+  // Windy options state
+  const windyOptions = ref<WindyOptions>(defaultWindyOptions);
+
   // Map settings state
   const mapSettings = ref<MapSettings>({
     center: defaultCenter,
@@ -24,7 +34,8 @@ export const useMapStore = defineStore('map', () => {
       harborFacilities: createDefaultLayerState(),
       coordinateGrid: createDefaultLayerState(),
       depthSoundings: createDefaultLayerState(),
-      bathymetricContours: createDefaultLayerState()
+      bathymetricContours: createDefaultLayerState(),
+      windy: createDefaultLayerState()
     }
   });
 
@@ -41,6 +52,8 @@ export const useMapStore = defineStore('map', () => {
       const savedSettings = localStorage.getItem('mapSettings');
       if (savedSettings) {
         const parsed = JSON.parse(savedSettings);
+
+        // Update map settings
         mapSettings.value = {
           ...mapSettings.value,
           ...parsed,
@@ -50,6 +63,16 @@ export const useMapStore = defineStore('map', () => {
             ...(parsed.layers || {})
           }
         };
+
+        // Update Windy options if they exist
+        if (parsed.windyOptions) {
+          windyOptions.value = {
+            overlay: parsed.windyOptions.overlay || defaultWindyOptions.overlay,
+            level: parsed.windyOptions.level || defaultWindyOptions.level,
+            timestamp: parsed.windyOptions.timestamp !== undefined ?
+              parsed.windyOptions.timestamp : defaultWindyOptions.timestamp
+          };
+        }
       }
     } catch (error) {
       console.error('Failed to load map settings from localStorage:', error);
@@ -62,7 +85,8 @@ export const useMapStore = defineStore('map', () => {
       localStorage.setItem('mapSettings', JSON.stringify({
         center: mapSettings.value.center,
         zoom: mapSettings.value.zoom,
-        layers: mapSettings.value.layers
+        layers: mapSettings.value.layers,
+        windyOptions: windyOptions.value
       }));
     } catch (error) {
       console.error('Failed to save map settings to localStorage:', error);
@@ -150,12 +174,41 @@ export const useMapStore = defineStore('map', () => {
     return measurementPaths.value.find(path => path.id === activeMeasurementId.value) || null;
   });
 
+  // Update Windy overlay
+  const updateWindyOverlay = (overlay: string) => {
+    windyOptions.value.overlay = overlay;
+    updateLayerTimestamp('windy');
+    saveSettings();
+  };
+
+  // Update Windy level
+  const updateWindyLevel = (level: string) => {
+    windyOptions.value.level = level;
+    updateLayerTimestamp('windy');
+    saveSettings();
+  };
+
+  // Update Windy timestamp
+  const updateWindyTimestamp = (timestamp: number | null) => {
+    windyOptions.value.timestamp = timestamp;
+    updateLayerTimestamp('windy');
+    saveSettings();
+  };
+
+  // Reset Windy options to defaults
+  const resetWindyOptions = () => {
+    windyOptions.value = { ...defaultWindyOptions };
+    updateLayerTimestamp('windy');
+    saveSettings();
+  };
+
   return {
     mapSettings,
     userLocation,
     measurementPaths,
     activeMeasurementId,
     activeMeasurement,
+    windyOptions,
     loadSettings,
     saveSettings,
     setUserLocation,
@@ -166,6 +219,10 @@ export const useMapStore = defineStore('map', () => {
     updateLayerTimestamp,
     addMeasurementPath,
     removeMeasurementPath,
-    clearMeasurements
+    clearMeasurements,
+    updateWindyOverlay,
+    updateWindyLevel,
+    updateWindyTimestamp,
+    resetWindyOptions
   };
 });

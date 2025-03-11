@@ -6,6 +6,7 @@ import LayerControl from './LayerControl.vue';
 import MeasurementTool from './MeasurementTool.vue';
 import FeatureInfo from './FeatureInfo.vue';
 import CoordinateDisplay from './CoordinateDisplay.vue';
+import WindyLayer from './WindyLayer.vue';
 
 // Define emits
 const emit = defineEmits<{
@@ -18,6 +19,7 @@ const mapStore = useMapStore();
 // Refs
 const mapInstance = ref<any>(null);
 const measurementToolRef = ref<InstanceType<typeof MeasurementTool> | null>(null);
+const windyLayerRef = ref<InstanceType<typeof WindyLayer> | null>(null);
 const mapReady = ref(false);
 
 // Current coordinates display
@@ -79,6 +81,11 @@ onMounted(() => {
       <FeatureInfo
         v-if="mapInstance"
         :map-instance="mapInstance"
+      />
+      <WindyLayer
+        v-if="mapInstance"
+        :map-instance="mapInstance"
+        ref="windyLayerRef"
       />
 
       <!-- Attribution Footer -->
