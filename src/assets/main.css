@@ -1,0 +1,19 @@
+@import './base.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* Leaflet specific styles */
+@import 'leaflet/dist/leaflet.css';
+
+#app {
+  width: 100%;
+  min-height: 100vh;
+  font-weight: normal;
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+}
